@@ -25,19 +25,20 @@ the program in the setUp () function will be run, and this part will only be run
 */
 void setup(){
     M5.begin();   
-    M5.EPD.SetRotation(90);
+    M5.EPD.SetRotation(0);
     M5.EPD.Clear(true);  //Clear the screen.  
     M5.RTC.begin();  //Init the RTC.
-    canvas.createCanvas(540, 960);  
+    // canvas.createCanvas(540, 960);  
+    canvas.createCanvas(960, 540);  
     canvas.setTextSize(3); 
-    canvas.drawString("Hello World2", 45, 350);  
+    // canvas.drawString("Hello World2", 45, 350);  
     canvas.pushCanvas(0,0,UPDATE_MODE_DU4);  //Update the screen.
 }
 /* After the program in setup() runs, it runs the program in loop()
 The loop() function is an infinite loop in which the program runs repeatedly */
 void loop(){
 
-char buf[100];
+char buf[130];
     // buf[ptr] = '\0';
     // if (ptr == 0) {
     //     strcpy(buf, "Waiting...");
