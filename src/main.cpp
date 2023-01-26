@@ -68,10 +68,10 @@ char buf[100];
         // RTC
         sprintf(buf, "%04d - %02d - %02d", date_struct.year, date_struct.mon,
                 date_struct.day);
-        canvas.drawString(buf, POS_RX, 30);
+        canvas.drawString(buf, 30, 300);
         sprintf(buf, "%02d : %02d : %02d", time_struct.hour, time_struct.min,
                 time_struct.sec);
-        canvas.drawString(buf, POS_RX, 90);
+        canvas.drawString(buf, 50, 400);
 
-        canvas.pushCanvas(300, 100, UPDATE_MODE_A2);
+        canvas.pushCanvas(0, 0, UPDATE_MODE_A2);
 }
