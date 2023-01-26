@@ -1,18 +1,22 @@
-// #include <M5EPD.h>
-// #include "epdgui/epdgui.h"
-// #include "frame/frame.h"
-// #include "systeminit.h"
+// #define test 0
 
-// void setup() {
-//     pinMode(M5EPD_MAIN_PWR_PIN, OUTPUT);
-//     M5.enableMainPower();
+#ifdef test 
+#include <M5EPD.h>
+#include "epdgui/epdgui.h"
+#include "frame/frame.h"
+#include "systeminit.h"
 
-//     SysInit_Start();
-// }
+void setup() {
+    pinMode(M5EPD_MAIN_PWR_PIN, OUTPUT);
+    M5.enableMainPower();
 
-// void loop() {
-//     EPDGUI_MainLoop();
-// }
+    SysInit_Start();
+}
+
+void loop() {
+    EPDGUI_MainLoop();
+}
+#else
 
 #define POS_LX (15)
 #define POS_RX (240 - 15)
@@ -76,3 +80,5 @@ char buf[130];
 
         canvas.pushCanvas(0, 0, UPDATE_MODE_A2);
 }
+
+#endif
