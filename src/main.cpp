@@ -14,6 +14,9 @@
 //     EPDGUI_MainLoop();
 // }
 
+#define POS_LX (15)
+#define POS_RX (240 - 15)
+
 #include <M5EPD.h>
 
 M5EPD_Canvas canvas(&M5.EPD);
@@ -34,4 +37,41 @@ void setup(){
 The loop() function is an infinite loop in which the program runs repeatedly */
 void loop(){
 
+char buf[100];
+    // buf[ptr] = '\0';
+    // if (ptr == 0) {
+    //     strcpy(buf, "Waiting...");
+    // }
+        // _time = millis();
+        rtc_time_t time_struct;
+        rtc_date_t date_struct;
+        M5.RTC.getTime(&time_struct);
+        M5.RTC.getDate(&date_struct);
+
+        if ((date_struct.year > 2010) && (time_struct.hour <= 24) &&
+            (time_struct.min <= 60) && (time_struct.sec <= 60)) {
+            // pass_flag |= 0x01;
+        }
+        // if (_prev_sec == 255) {
+        //     _prev_sec = time_struct.sec;
+        // }
+        // if (time_struct.sec != _prev_sec) {
+        //     pass_flag |= 0x02;
+        // }
+
+        // _canvas_data->fillCanvas(0);
+        // _canvas_data->setTextSize(26);
+
+        canvas.fillCanvas(0);
+        canvas.setTextSize(26);
+
+        // RTC
+        sprintf(buf, "%04d - %02d - %02d", date_struct.year, date_struct.mon,
+                date_struct.day);
+        canvas.drawString(buf, POS_RX, 30);
+        sprintf(buf, "%02d : %02d : %02d", time_struct.hour, time_struct.min,
+                time_struct.sec);
+        canvas.drawString(buf, POS_RX, 90);
+
+        canvas.pushCanvas(300, 100, UPDATE_MODE_A2);
 }
