@@ -131,7 +131,7 @@ Frame_Main::Frame_Main(void) : Frame_Base(false) {
             new EPDGUI_Button("测试", 20 + i * 136, 240, KEY_W, KEY_H);
     }
 
-    _key[8] = new EPDGUI_Button("clock", 20 + 136, 390, KEY_W, KEY_H);
+    _key[8] = new EPDGUI_Button("clock", 20, 390, KEY_W, KEY_H);
 
     _key[kKeySetting]->CanvasNormal()->pushImage(
         0, 0, 92, 92, ImageResource_main_icon_setting_92x92);
