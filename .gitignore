@@ -33,3 +33,6 @@
 
 .pio
 .vscode
+.DS_Store
+.pio/build/project.checksum
+.pio/build/m5stack-fire/idedata.json
