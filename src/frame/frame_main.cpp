@@ -2,6 +2,7 @@
 #include "frame_setting.h"
 #include "frame_keyboard.h"
 #include "frame_factorytest.h"
+#include "frame_clock.h"
 #include "frame_wifiscan.h"
 #include "frame_lifegame.h"
 #include "frame_fileindex.h"
@@ -16,7 +17,8 @@ enum {
     kKeySDFile,
     kKeyCompare,
     kKeyHome,
-    kKeyLifeGame
+    kKeyLifeGame,
+    kKeyClock
 };
 
 #define KEY_W 92
@@ -47,6 +49,16 @@ void key_factorytest_cb(epdgui_args_vector_t &args) {
     if (frame == NULL) {
         frame = new Frame_FactoryTest();
         EPDGUI_AddFrame("Frame_FactoryTest", frame);
+    }
+    EPDGUI_PushFrame(frame);
+    *((int *)(args[0])) = 0;
+}
+
+void key_clock_cb(epdgui_args_vector_t &args) {
+    Frame_Base *frame = EPDGUI_GetFrame("Frame_Clock");
+    if (frame == NULL) {
+        frame = new Frame_Clock();
+        EPDGUI_AddFrame("Frame_Clock", frame);
     }
     EPDGUI_PushFrame(frame);
     *((int *)(args[0])) = 0;
@@ -119,6 +131,8 @@ Frame_Main::Frame_Main(void) : Frame_Base(false) {
             new EPDGUI_Button("测试", 20 + i * 136, 240, KEY_W, KEY_H);
     }
 
+    _key[8] = new EPDGUI_Button("clock", 20 + 136, 390, KEY_W, KEY_H);
+
     _key[kKeySetting]->CanvasNormal()->pushImage(
         0, 0, 92, 92, ImageResource_main_icon_setting_92x92);
     *(_key[kKeySetting]->CanvasPressed()) =
@@ -146,6 +160,16 @@ Frame_Main::Frame_Main(void) : Frame_Base(false) {
                                    (void *)(&_is_run));
     _key[kKeyFactoryTest]->Bind(EPDGUI_Button::EVENT_RELEASED,
                                 key_factorytest_cb);
+
+    _key[kKeyClock]->CanvasNormal()->pushImage(
+        0, 0, 92, 92, ImageResource_main_icon_factorytest_92x92);
+    *(_key[kKeyClock]->CanvasPressed()) =
+        *(_key[kKeyClock]->CanvasNormal());
+    _key[kKeyClock]->CanvasPressed()->ReverseColor();
+    _key[kKeyClock]->AddArgs(EPDGUI_Button::EVENT_RELEASED, 0,
+                                   (void *)(&_is_run));
+    _key[kKeyClock]->Bind(EPDGUI_Button::EVENT_RELEASED,
+                                key_clock_cb);
 
     _key[kKeyWifiScan]->CanvasNormal()->pushImage(
         0, 0, 92, 92, ImageResource_main_icon_wifi_92x92);
@@ -294,7 +318,7 @@ void Frame_Main::StatusBar(m5epd_update_mode_t mode) {
 int Frame_Main::init(epdgui_args_vector_t &args) {
     _is_run = 1;
     M5.EPD.WriteFullGram4bpp(GetWallpaper());
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < 9; i++) {
         EPDGUI_AddObject(_key[i]);
     }
     _time             = 0;
