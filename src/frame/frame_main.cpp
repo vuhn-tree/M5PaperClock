@@ -219,7 +219,7 @@ Frame_Main::Frame_Main(void) : Frame_Base(false) {
 }
 
 Frame_Main::~Frame_Main(void) {
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < 9; i++) {
         delete _key[i];
     }
 }
@@ -265,6 +265,10 @@ void Frame_Main::AppName(m5epd_update_mode_t mode) {
         _names->drawString("LifeGame", 20 + 46 + 3 * 136, 16);
     }
     _names->pushCanvas(0, 337, mode);
+
+    _names->fillCanvas(0);
+    _names->drawString("Clock", 20 + 46, 16);
+    _names->pushCanvas(0, 488, mode);
 }
 
 void Frame_Main::StatusBar(m5epd_update_mode_t mode) {
