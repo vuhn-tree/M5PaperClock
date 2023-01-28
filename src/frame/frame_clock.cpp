@@ -74,10 +74,12 @@ int Frame_Clock::run() {
         _canvas_data->fillCanvas(0);
         _canvas_data->setTextSize(26);
 
-        // RTC
+        // RTC Date
         sprintf(buf, "%04d - %02d - %02d", date_struct.year, date_struct.mon,
                 date_struct.day);
         _canvas_data->drawString(buf, POS_RX, 30);
+
+        // RTC Time
         sprintf(buf, "%02d : %02d : %02d", time_struct.hour, time_struct.min,
                 time_struct.sec);
         _canvas_data->drawString(buf, POS_RX, 90);
@@ -88,8 +90,11 @@ int Frame_Clock::run() {
             float ctemp = M5.SHT30.GetTemperature();
             float chumi = M5.SHT30.GetRelHumidity();
 
+            // temperature
             sprintf(buf, "%.2f ℃", ctemp);
             _canvas_data->drawString(buf, POS_RX, 150);
+
+            // humidity
             sprintf(buf, "%d %%", (int)chumi);
             _canvas_data->drawString(buf, POS_RX, 210);
         } else {
@@ -107,6 +112,6 @@ int Frame_Clock::init(epdgui_args_vector_t &args) {
     M5.EPD.Clear();
     _canvas_title->pushCanvas(0, 8, UPDATE_MODE_NONE);
     EPDGUI_AddObject(_key_exit);
-    _time          = 0;
+    _time = 0;
     return 3;
 }
