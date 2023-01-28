@@ -1,4 +1,4 @@
-// #define test 0
+#define test
 
 #ifdef test
 #include <M5EPD.h>
