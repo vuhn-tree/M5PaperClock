@@ -1,4 +1,4 @@
-#define test
+// #define test
 
 #ifdef test
 #include <M5EPD.h>
@@ -25,6 +25,8 @@ void loop()
 
 #include <M5EPD.h>
 
+int _time = 0;
+
 M5EPD_Canvas canvas(&M5.EPD);
 /* After M5Paper is started or reset
 the program in the setUp () function will be run, and this part will only be run once.
@@ -32,7 +34,7 @@ the program in the setUp () function will be run, and this part will only be run
 void setup()
 {
     M5.begin();
-    M5.EPD.SetRotation(0);
+    M5.EPD.SetRotation(180);
     M5.EPD.Clear(true); // Clear the screen.
     M5.RTC.begin();     // Init the RTC.
     // canvas.createCanvas(540, 960);
@@ -45,7 +47,8 @@ void setup()
 The loop() function is an infinite loop in which the program runs repeatedly */
 void loop()
 {
-
+    if (millis() - _time > 1000) {
+        _time = millis();
     char buf[130];
     // buf[ptr] = '\0';
     // if (ptr == 0) {
@@ -84,6 +87,7 @@ void loop()
     canvas.drawString(buf, 50, 400);
 
     canvas.pushCanvas(0, 0, UPDATE_MODE_A2);
+    }
 }
 
 #endif
