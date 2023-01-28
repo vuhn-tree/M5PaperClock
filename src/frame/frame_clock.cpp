@@ -12,7 +12,6 @@ void frame_clock_exit_cb(epdgui_args_vector_t &args) {
 }
 
 Frame_Clock::Frame_Clock(void) {
-    // TODO: Voltage WiFi Psram touch pos
     _frame_name = "Frame_FactoryTest";
 
     _canvas_base = new M5EPD_Canvas(&M5.EPD);
@@ -39,17 +38,8 @@ Frame_Clock::Frame_Clock(void) {
     _canvas_btn->setTextDatum(CR_DATUM);
     _canvas_pass->setTextDatum(CR_DATUM);
 
-    _language = GetLanguage();
-    if (_language == LANGUAGE_JA) {
-        exitbtn("ホーム");
-        _canvas_title->drawString("工場テスト", 270, 34);
-    } else if (_language == LANGUAGE_ZH) {
-        exitbtn("主页");
-        _canvas_title->drawString("出厂测试", 270, 34);
-    } else {
-        exitbtn("Home");
-        _canvas_title->drawString("Factory Test", 270, 34);
-    }
+    exitbtn("Home");
+    _canvas_title->drawString("Factory Test", 270, 34);
 
     _key_exit->AddArgs(EPDGUI_Button::EVENT_RELEASED, 0, (void *)(&_is_run));
     _key_exit->Bind(EPDGUI_Button::EVENT_RELEASED, &Frame_Base::exit_cb);
@@ -108,34 +98,12 @@ void Frame_Clock::drawItem(uint16_t flag, const char *str, int y) {
 
 void Frame_Clock::drawItem(m5epd_update_mode_t mode) {
     _canvas_base->fillCanvas(0);
-    if (_language == LANGUAGE_JA) {
-        drawItem(0x0001, "1.期日", 30);
-        drawItem(0x0002, "2.時間", 90);
-        drawItem(0x0004, "3.温度", 150);
-        drawItem(0x0008, "4.湿度", 210);
-        drawItem(0x0010, "5.電池", 270);
-        drawItem(0x0020, "6.Wi-Fi", 330);
-        drawItem(0x0040, "7.PSRAM", 390);
-        drawItem(0x0080, "8.SDカード", 450);
-        drawItem(0x0100, "9.ボタン", 510);
-        drawItem(0x0200, "10.タッチパッド", 570);
-    } else if (_language == LANGUAGE_ZH) {
-        drawItem(0x0001, "1.日期", 30);
-        drawItem(0x0002, "2.时间", 90);
-        drawItem(0x0004, "3.温度", 150);
-        drawItem(0x0008, "4.湿度", 210);
-        drawItem(0x0010, "5.电池", 270);
-        drawItem(0x0020, "6.Wi-Fi", 330);
-        drawItem(0x0040, "7.PSRAM", 390);
-        drawItem(0x0080, "8.SD卡", 450);
-        drawItem(0x0100, "9.按键", 510);
-        drawItem(0x0200, "10.触屏", 570);
-    } else {
-        drawItem(0x0001, "1.day", 30);
-        drawItem(0x0002, "2.Time", 90);
-        drawItem(0x0004, "3.Temperature", 150);
-        drawItem(0x0008, "4.Humidity", 210);
-    }
+
+    drawItem(0x0001, "1.day", 30);
+    drawItem(0x0002, "2.Time", 90);
+    drawItem(0x0004, "3.Temperature", 150);
+    drawItem(0x0008, "4.Humidity", 210);
+
     _canvas_base->pushCanvas(0, 100, mode);
 }
 
