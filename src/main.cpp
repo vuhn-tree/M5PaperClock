@@ -82,7 +82,7 @@ void loop()
                 time_struct.sec);
         centerX = (960 / 2) - (canvas.textWidth(buf) / 2);
         int centerY = (540 / 2) - (canvas.fontHeight() / 2);
-        canvas.drawString(buf, centerX, centerY, 100);
+        canvas.drawString(buf, centerX, centerY);
 
         canvas.pushCanvas(0, 0, UPDATE_MODE_A2);
     }
