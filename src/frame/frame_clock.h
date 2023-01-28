@@ -19,10 +19,8 @@ class Frame_Clock : public Frame_Base {
     M5EPD_Canvas *_canvas_base;
     M5EPD_Canvas *_canvas_data;
     M5EPD_Canvas *_canvas_pos;
-    M5EPD_Canvas *_canvas_btn;
     M5EPD_Canvas *_canvas_pass;
     uint32_t _time;
-    uint8_t _btn;
 
 };
 

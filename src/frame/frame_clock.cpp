@@ -17,25 +17,21 @@ Frame_Clock::Frame_Clock(void) {
     _canvas_base = new M5EPD_Canvas(&M5.EPD);
     _canvas_data = new M5EPD_Canvas(&M5.EPD);
     _canvas_pos  = new M5EPD_Canvas(&M5.EPD);
-    _canvas_btn  = new M5EPD_Canvas(&M5.EPD);
     _canvas_pass = new M5EPD_Canvas(&M5.EPD);
 
     _canvas_base->createCanvas(300, 600);
     _canvas_data->createCanvas(240, 480);
     _canvas_pos->createCanvas(240, 60);
-    _canvas_btn->createCanvas(240, 60);
     _canvas_pass->createCanvas(150, 32);
 
     _canvas_base->setTextSize(26);
     _canvas_data->setTextSize(26);
     _canvas_pos->setTextSize(26);
-    _canvas_btn->setTextSize(26);
     _canvas_pass->setTextSize(26);
 
     _canvas_base->setTextDatum(CL_DATUM);
     _canvas_data->setTextDatum(CR_DATUM);
     _canvas_pos->setTextDatum(CR_DATUM);
-    _canvas_btn->setTextDatum(CR_DATUM);
     _canvas_pass->setTextDatum(CR_DATUM);
 
     exitbtn("Home");
@@ -71,7 +67,6 @@ Frame_Clock::Frame_Clock(void) {
     }
 
     _time          = 0;
-    _btn           = 0;
     
 }
 
@@ -79,7 +74,6 @@ Frame_Clock::~Frame_Clock(void) {
     delete _canvas_base;
     delete _canvas_data;
     delete _canvas_pos;
-    delete _canvas_btn;
     delete _canvas_pass;
 }
 
@@ -105,38 +99,8 @@ void Frame_Clock::drawItem(m5epd_update_mode_t mode) {
 
 int Frame_Clock::run() {
     Frame_Base::run();
-    // uint16_t pass_flag = _pass_flag;
+
     char buf[100];
-    
-    // BTN
-    M5.update();
-    int ptr        = 0;
-    bool ispressed = false;
-    
-    if (M5.BtnL.isPressed()) {
-        _btn |= 0x01;
-        buf[ptr++] = 'L';
-        ispressed  = true;
-    }
-    if (M5.BtnP.isPressed()) {
-        _btn |= 0x02;
-        buf[ptr++] = 'P';
-        ispressed  = true;
-    }
-    if (M5.BtnR.isPressed()) {
-        _btn |= 0x04;
-        buf[ptr++] = 'R';
-        ispressed  = true;
-    }
-    buf[ptr] = '\0';
-    if (ptr == 0) {
-        strcpy(buf, "Waiting...");
-    }
-    if (ispressed) {
-        _canvas_btn->fillCanvas(0);
-        _canvas_btn->drawString(buf, POS_RX, 30);
-        _canvas_btn->pushCanvas(300, 580, UPDATE_MODE_A2);
-    }
 
     if (millis() - _time > 1000) {
         _time = millis();
@@ -187,7 +151,6 @@ int Frame_Clock::init(epdgui_args_vector_t &args) {
     EPDGUI_AddObject(_key_exit);
 
     _time          = 0;
-    _btn           = 0;
 
     return 3;
 }
