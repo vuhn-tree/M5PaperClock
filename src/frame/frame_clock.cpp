@@ -72,9 +72,7 @@ Frame_Clock::Frame_Clock(void) {
 
     _time          = 0;
     _btn           = 0;
-    _isfirst       = true;
-    _pass_flag     = 0;
-    _pass_flag |= GetInitStatus(0) ? 0x0080 : 0;
+    
 }
 
 Frame_Clock::~Frame_Clock(void) {
@@ -88,12 +86,10 @@ Frame_Clock::~Frame_Clock(void) {
 void Frame_Clock::drawItem(uint16_t flag, const char *str, int y) {
     String prefix_pass("[PASS] ");
     String prefix_none("");
-    if (_pass_flag & flag) {
-        _canvas_base->drawString(prefix_pass + str, POS_LX, y);
-    } else {
-        _canvas_base->drawString(str, POS_LX, y);
-        _canvas_base->ReversePartColor(0, y - 30, 300, 60);
-    }
+    
+    _canvas_base->drawString(str, POS_LX, y);
+    _canvas_base->ReversePartColor(0, y - 30, 300, 60);
+    
 }
 
 void Frame_Clock::drawItem(m5epd_update_mode_t mode) {
@@ -107,29 +103,16 @@ void Frame_Clock::drawItem(m5epd_update_mode_t mode) {
     _canvas_base->pushCanvas(0, 100, mode);
 }
 
-void Frame_Clock::drawPassCount(m5epd_update_mode_t mode) {
-    uint16_t x = _pass_flag, n = 0;
-    for (; x; x >>= 1) n += x & 1;
-    char buf[20];
-    sprintf(buf, "PASS %d/13", n);
-    _canvas_pass->fillCanvas(0);
-    _canvas_pass->drawString(buf, 150, 14);
-    _canvas_pass->pushCanvas(375, 28, mode);
-}
-
 int Frame_Clock::run() {
     Frame_Base::run();
-    uint16_t pass_flag = _pass_flag;
+    // uint16_t pass_flag = _pass_flag;
     char buf[100];
     
     // BTN
     M5.update();
     int ptr        = 0;
     bool ispressed = false;
-    if (_btn == 0x07) {
-        _btn |= 0x08;
-        pass_flag |= 0x0100;
-    }
+    
     if (M5.BtnL.isPressed()) {
         _btn |= 0x01;
         buf[ptr++] = 'L';
@@ -162,17 +145,10 @@ int Frame_Clock::run() {
         M5.RTC.getTime(&time_struct);
         M5.RTC.getDate(&date_struct);
 
-        if ((date_struct.year > 2010) && (time_struct.hour <= 24) &&
-            (time_struct.min <= 60) && (time_struct.sec <= 60)) {
-            pass_flag |= 0x01;
-        }
         if (_prev_sec == 255) {
             _prev_sec = time_struct.sec;
         }
-        if (time_struct.sec != _prev_sec) {
-            pass_flag |= 0x02;
-        }
-
+        
         _canvas_data->fillCanvas(0);
         _canvas_data->setTextSize(26);
 
@@ -190,24 +166,6 @@ int Frame_Clock::run() {
             float ctemp = M5.SHT30.GetTemperature();
             float chumi = M5.SHT30.GetRelHumidity();
 
-            if (!(pass_flag & 0x04)) {
-                if (_prev_temp > 100) {
-                    _prev_temp = ctemp;
-                }
-                if ((ctemp < 40) && (ctemp > 0) && (_prev_temp != ctemp)) {
-                    pass_flag |= 0x04;
-                }
-            }
-
-            if (!(pass_flag & 0x08)) {
-                if (_prev_hum > 100) {
-                    _prev_hum = chumi;
-                }
-                if ((chumi >= 0) && (chumi <= 100) && (_prev_hum != chumi)) {
-                    pass_flag |= 0x08;
-                }
-            }
-
             sprintf(buf, "%.2f ℃", ctemp);
             _canvas_data->drawString(buf, POS_RX, 150);
             sprintf(buf, "%d %%", (int)chumi);
@@ -220,29 +178,6 @@ int Frame_Clock::run() {
         _canvas_data->pushCanvas(300, 100, UPDATE_MODE_A2);
     }
 
-    //  grove
-    uint16_t temp = pass_flag;
-   
-    bool update_flag = false;
-    if (temp != pass_flag) {
-        if (pass_flag != _pass_flag) {
-            update_flag = true;
-        }
-        _pass_flag = pass_flag;
-        update_flag = true;
-    } else if (update_flag || (pass_flag != _pass_flag)) {
-        _pass_flag = pass_flag;
-        drawItem(UPDATE_MODE_GL16);
-        update_flag = true;
-    }
-    if (update_flag) {
-        drawPassCount(UPDATE_MODE_GL16);
-    }
-
-    if (_isfirst) {
-        _isfirst = false;
-    }
-
     return 1;
 }
 
@@ -252,12 +187,11 @@ int Frame_Clock::init(epdgui_args_vector_t &args) {
     _canvas_title->pushCanvas(0, 8, UPDATE_MODE_NONE);
     _canvas_base->pushCanvas(0, 100, UPDATE_MODE_NONE);
     drawItem(UPDATE_MODE_NONE);
-    drawPassCount(UPDATE_MODE_NONE);
+    // drawPassCount(UPDATE_MODE_NONE);
     EPDGUI_AddObject(_key_exit);
 
     _time          = 0;
     _btn           = 0;
-    _isfirst       = true;
     _prev_sec      = 255;
     _prev_temp     = 255;
     _prev_hum      = 255;

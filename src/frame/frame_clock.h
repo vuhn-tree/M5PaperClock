@@ -14,7 +14,6 @@ class Frame_Clock : public Frame_Base {
    private:
     void drawItem(m5epd_update_mode_t mode);
     void drawItem(uint16_t flag, const char *str, int y);
-    void drawPassCount(m5epd_update_mode_t mode);
 
    private:
     M5EPD_Canvas *_canvas_base;
@@ -24,8 +23,6 @@ class Frame_Clock : public Frame_Base {
     M5EPD_Canvas *_canvas_pass;
     uint32_t _time;
     uint8_t _btn;
-    bool _isfirst;
-    uint16_t _pass_flag;
     uint8_t _prev_sec;
     float _prev_temp;
     float _prev_hum;
