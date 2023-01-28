@@ -82,7 +82,6 @@ Frame_Clock::Frame_Clock(void) {
 
     _time          = 0;
     _btn           = 0;
-    _psram_success = false;
     _isfirst       = true;
     _pass_flag     = 0;
     _pass_flag |= GetInitStatus(0) ? 0x0080 : 0;
@@ -136,49 +135,8 @@ void Frame_Clock::drawItem(m5epd_update_mode_t mode) {
         drawItem(0x0002, "2.Time", 90);
         drawItem(0x0004, "3.Temperature", 150);
         drawItem(0x0008, "4.Humidity", 210);
-        drawItem(0x0010, "5.Battery", 270);
-        drawItem(0x0020, "6.Wi-Fi", 330);
-        drawItem(0x0040, "7.PSRAM", 390);
-        drawItem(0x0080, "8.SD Card", 450);
-        drawItem(0x0100, "9.Button", 510);
-        drawItem(0x0200, "10.TouchPad", 570);
     }
     _canvas_base->pushCanvas(0, 100, mode);
-}
-
-void Frame_Clock::drawGrove(m5epd_update_mode_t mode) {
-    M5.EPD.WritePartGram4bpp(428, 916, 100, 40,
-                             (_pass_flag & 0x0400)
-                                 ? ImageResource_factory_pass_h_100x40
-                                 : ImageResource_factory_port_a_100x40);
-    M5.EPD.WritePartGram4bpp(4, 848, 40, 100,
-                             (_pass_flag & 0x0800)
-                                 ? ImageResource_factory_pass_v_40x100
-                                 : ImageResource_factory_port_b_40x100);
-    M5.EPD.WritePartGram4bpp(4, 720, 40, 100,
-                             (_pass_flag & 0x1000)
-                                 ? ImageResource_factory_pass_v_40x100
-                                 : ImageResource_factory_port_c_40x100);
-    M5.EPD.UpdateArea(0, 720, 540, 240, mode);
-}
-
-bool Frame_Clock::checkGrove(int sda, int scl) {
-    Wire1.begin(sda, scl, 10000UL);
-    bool groveCheck = true;
-
-    Wire1.beginTransmission(0x76);
-    Wire1.write(0xD0);
-    if (Wire1.endTransmission() != 0) {
-        groveCheck = false;
-    } else {
-        Wire1.requestFrom(0x76, 1);
-        uint8_t chipID = Wire1.read();
-        if (chipID != 0x58) {
-            groveCheck = false;
-        }
-    }
-
-    return groveCheck;
 }
 
 void Frame_Clock::drawPassCount(m5epd_update_mode_t mode) {
@@ -191,40 +149,11 @@ void Frame_Clock::drawPassCount(m5epd_update_mode_t mode) {
     _canvas_pass->pushCanvas(375, 28, mode);
 }
 
-void Frame_Clock::scan(String *ssid, int32_t *rssi) {
-    WiFi.mode(WIFI_STA);
-    WiFi.disconnect();
-    WiFi.scanNetworks(true);
-
-    int wifi_num;
-    while (1) {
-        wifi_num = WiFi.scanComplete();
-        if (wifi_num >= 0) {
-            break;
-        }
-    }
-
-    *ssid = WiFi.SSID(0);
-    *rssi = WiFi.RSSI(0);
-    WiFi.scanDelete();
-}
-
 int Frame_Clock::run() {
     Frame_Base::run();
     uint16_t pass_flag = _pass_flag;
     char buf[100];
-    // POS
-    if ((M5.TP.readFingerX(0) != _last_x) ||
-        (M5.TP.readFingerY(0) != _last_y)) {
-        pass_flag |= 0x0200;
-        _last_x = M5.TP.readFingerX(0);
-        _last_y = M5.TP.readFingerY(0);
-        sprintf(buf, "X %d, Y %d", _last_x, _last_y);
-        _canvas_pos->fillCanvas(0);
-        _canvas_pos->drawString(buf, POS_RX, 30);
-        _canvas_pos->pushCanvas(300, 640, UPDATE_MODE_A2);
-    }
-
+    
     // BTN
     M5.update();
     int ptr        = 0;
@@ -320,87 +249,18 @@ int Frame_Clock::run() {
             _canvas_data->drawString("[FAILED]", POS_RX, 210);
         }
 
-        // Battery
-        uint32_t vol = M5.getBatteryVoltage();
-        if (_prev_vol == 0) {
-            _prev_vol = vol;
-        }
-        if (_prev_vol != vol) {
-            pass_flag |= 0x10;
-        }
-        float vol_f = vol / 1000.0f;
-        sprintf(buf, "%.2f V", vol_f);
-        _canvas_data->drawString(buf, POS_RX, 270);
-
-        // WiFi
-        if (_isfirst) {
-            String ssid;
-            int32_t rssi;
-            scan(&ssid, &rssi);
-            sprintf(buf, "%s (%d db)", ssid.c_str(), rssi);
-            _wifistr = String(buf);
-            if (rssi > -55) {
-                pass_flag |= 0x20;
-            }
-        }
-        _canvas_data->drawString(_wifistr, POS_RX, 330);
-
-        // PSRAM
-        if (_isfirst) {
-            uint8_t *test_p = (uint8_t *)ps_malloc(16);
-            if (test_p != NULL) {
-                free(test_p);
-                _psram_success = true;
-                sprintf(buf, "Free %.2f KiB", ESP.getFreePsram() / 1024.0f);
-                _canvas_data->drawString(buf, POS_RX, 390);
-                pass_flag |= 0x40;
-            } else {
-                _psram_success = false;
-                sprintf(buf, "[FAILED]");
-                _canvas_data->drawString(buf, POS_RX, 390);
-            }
-        } else {
-            if (_psram_success) {
-                sprintf(buf, "Free %.2f KiB", ESP.getFreePsram() / 1024.0f);
-                _canvas_data->drawString(buf, POS_RX, 390);
-            } else {
-                _canvas_data->drawString("[FAILED]", POS_RX, 390);
-            }
-        }
-
-        // SD
-        if (GetInitStatus(0)) {
-            sprintf(buf, "%.2f MiB", SD.cardSize() / 1024.0f / 1024.0f);
-            _canvas_data->drawString(buf, POS_RX, 450);
-        } else {
-            _canvas_data->drawString("[FAILED]", POS_RX, 450);
-        }
-
         _canvas_data->pushCanvas(300, 100, UPDATE_MODE_A2);
     }
 
     //  grove
     uint16_t temp = pass_flag;
-    if (!(pass_flag & 0x0400)) {
-        pass_flag |=
-            checkGrove(M5EPD_PORTA_Y_PIN, M5EPD_PORTA_W_PIN) ? 0x0400 : 0x0000;
-    }
-    if (!(pass_flag & 0x0800)) {
-        pass_flag |=
-            checkGrove(M5EPD_PORTB_Y_PIN, M5EPD_PORTB_W_PIN) ? 0x0800 : 0x0000;
-    }
-    if (!(pass_flag & 0x1000)) {
-        pass_flag |=
-            checkGrove(M5EPD_PORTC_Y_PIN, M5EPD_PORTC_W_PIN) ? 0x1000 : 0x0000;
-    }
-
+   
     bool update_flag = false;
     if (temp != pass_flag) {
         if (pass_flag != _pass_flag) {
             update_flag = true;
         }
         _pass_flag = pass_flag;
-        drawGrove(UPDATE_MODE_GL16);
         update_flag = true;
     } else if (update_flag || (pass_flag != _pass_flag)) {
         _pass_flag = pass_flag;
@@ -424,20 +284,15 @@ int Frame_Clock::init(epdgui_args_vector_t &args) {
     _canvas_title->pushCanvas(0, 8, UPDATE_MODE_NONE);
     _canvas_base->pushCanvas(0, 100, UPDATE_MODE_NONE);
     drawItem(UPDATE_MODE_NONE);
-    drawGrove(UPDATE_MODE_NONE);
     drawPassCount(UPDATE_MODE_NONE);
     EPDGUI_AddObject(_key_exit);
 
     _time          = 0;
     _btn           = 0;
-    _psram_success = false;
     _isfirst       = true;
-    _last_x        = 0;
-    _last_y        = 0;
     _prev_sec      = 255;
     _prev_temp     = 255;
     _prev_hum      = 255;
-    _prev_vol      = 0;
 
     return 3;
 }
