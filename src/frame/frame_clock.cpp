@@ -12,7 +12,7 @@ void frame_clock_exit_cb(epdgui_args_vector_t &args) {
 }
 
 Frame_Clock::Frame_Clock(void) {
-    _frame_name = "Frame_FactoryTest";
+    _frame_name = "Frame_Clock";
 
     _canvas_base = new M5EPD_Canvas(&M5.EPD);
     _canvas_data = new M5EPD_Canvas(&M5.EPD);
@@ -39,7 +39,7 @@ Frame_Clock::Frame_Clock(void) {
     _canvas_pass->setTextDatum(CR_DATUM);
 
     exitbtn("Home");
-    _canvas_title->drawString("Factory Test", 270, 34);
+    _canvas_title->drawString("Clock", 270, 34);
 
     _key_exit->AddArgs(EPDGUI_Button::EVENT_RELEASED, 0, (void *)(&_is_run));
     _key_exit->Bind(EPDGUI_Button::EVENT_RELEASED, &Frame_Base::exit_cb);
