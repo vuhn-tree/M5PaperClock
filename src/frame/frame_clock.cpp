@@ -87,11 +87,11 @@ int Frame_Clock::run() {
         // SHT30
         M5.SHT30.UpdateData();
         if (M5.SHT30.GetError() == 0) {
-            float ctemp = M5.SHT30.GetTemperature();
+            float ctemp = M5.SHT30.GetTemperature(M5.SHT30.TemperatureScale::Fah);
             float chumi = M5.SHT30.GetRelHumidity();
 
             // temperature
-            sprintf(buf, "%.2f ℃", ctemp);
+            sprintf(buf, "%.2f F", ctemp);
             _canvas_data->drawString(buf, POS_RX, 150);
 
             // humidity
