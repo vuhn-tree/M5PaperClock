@@ -60,7 +60,7 @@ void loop()
     }
     M5.BtnL.lastChange();
     M5.update();
-    // delay(100);
+    delay(100);
 
     if (millis() - _time > 1000)
     {
