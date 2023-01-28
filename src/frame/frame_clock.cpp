@@ -14,16 +14,9 @@ void frame_clock_exit_cb(epdgui_args_vector_t &args) {
 Frame_Clock::Frame_Clock(void) {
     _frame_name = "Frame_Clock";
 
-    _canvas_base = new M5EPD_Canvas(&M5.EPD);
     _canvas_data = new M5EPD_Canvas(&M5.EPD);
-
-    _canvas_base->createCanvas(300, 600);
     _canvas_data->createCanvas(240, 480);
-
-    _canvas_base->setTextSize(26);
     _canvas_data->setTextSize(26);
-
-    _canvas_base->setTextDatum(CL_DATUM);
     _canvas_data->setTextDatum(CR_DATUM);
 
     exitbtn("Home");
@@ -58,33 +51,12 @@ Frame_Clock::Frame_Clock(void) {
         M5.RTC.setDate(&date_struct);
     }
 
-    _time          = 0;
+    _time = 0;
     
 }
 
 Frame_Clock::~Frame_Clock(void) {
-    delete _canvas_base;
     delete _canvas_data;
-}
-
-void Frame_Clock::drawItem(uint16_t flag, const char *str, int y) {
-    String prefix_pass("[PASS] ");
-    String prefix_none("");
-    
-    _canvas_base->drawString(str, POS_LX, y);
-    _canvas_base->ReversePartColor(0, y - 30, 300, 60);
-    
-}
-
-void Frame_Clock::drawItem(m5epd_update_mode_t mode) {
-    _canvas_base->fillCanvas(0);
-
-    drawItem(0x0001, "1.day", 30);
-    drawItem(0x0002, "2.Time", 90);
-    drawItem(0x0004, "3.Temperature", 150);
-    drawItem(0x0008, "4.Humidity", 210);
-
-    _canvas_base->pushCanvas(0, 100, mode);
 }
 
 int Frame_Clock::run() {
@@ -98,7 +70,6 @@ int Frame_Clock::run() {
         rtc_date_t date_struct;
         M5.RTC.getTime(&time_struct);
         M5.RTC.getDate(&date_struct);
-
         
         _canvas_data->fillCanvas(0);
         _canvas_data->setTextSize(26);
@@ -128,7 +99,6 @@ int Frame_Clock::run() {
 
         _canvas_data->pushCanvas(300, 100, UPDATE_MODE_A2);
     }
-
     return 1;
 }
 
@@ -136,11 +106,7 @@ int Frame_Clock::init(epdgui_args_vector_t &args) {
     _is_run = 1;
     M5.EPD.Clear();
     _canvas_title->pushCanvas(0, 8, UPDATE_MODE_NONE);
-    _canvas_base->pushCanvas(0, 100, UPDATE_MODE_NONE);
-    drawItem(UPDATE_MODE_NONE);
     EPDGUI_AddObject(_key_exit);
-
     _time          = 0;
-
     return 3;
 }

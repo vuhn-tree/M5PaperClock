@@ -12,11 +12,6 @@ class Frame_Clock : public Frame_Base {
     int init(epdgui_args_vector_t &args);
 
    private:
-    void drawItem(m5epd_update_mode_t mode);
-    void drawItem(uint16_t flag, const char *str, int y);
-
-   private:
-    M5EPD_Canvas *_canvas_base;
     M5EPD_Canvas *_canvas_data;
     uint32_t _time;
 
