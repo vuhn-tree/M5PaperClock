@@ -74,12 +74,15 @@ void loop()
         // RTC Date
         sprintf(buf, "%04d - %02d - %02d", date_struct.year, date_struct.mon,
                 date_struct.day);
-        canvas.drawString(buf, 30, 300);
+        int centerX = (960 / 2) - (canvas.textWidth(buf) / 2);
+        canvas.drawString(buf, centerX, 10);
 
         // RTC Time
         sprintf(buf, "%02d : %02d : %02d", time_struct.hour, time_struct.min,
                 time_struct.sec);
-        canvas.drawString(buf, 50, 400);
+        centerX = (960 / 2) - (canvas.textWidth(buf) / 2);
+        int centerY = (540 / 2) - (canvas.fontHeight() / 2);
+        canvas.drawString(buf, centerX, centerY, 100);
 
         canvas.pushCanvas(0, 0, UPDATE_MODE_A2);
     }
