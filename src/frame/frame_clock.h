@@ -23,9 +23,7 @@ class Frame_Clock : public Frame_Base {
     M5EPD_Canvas *_canvas_pass;
     uint32_t _time;
     uint8_t _btn;
-    uint8_t _prev_sec;
-    float _prev_temp;
-    float _prev_hum;
+
 };
 
 #endif  //_FRAME_CLOCK_H_

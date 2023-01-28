@@ -145,9 +145,6 @@ int Frame_Clock::run() {
         M5.RTC.getTime(&time_struct);
         M5.RTC.getDate(&date_struct);
 
-        if (_prev_sec == 255) {
-            _prev_sec = time_struct.sec;
-        }
         
         _canvas_data->fillCanvas(0);
         _canvas_data->setTextSize(26);
@@ -187,14 +184,10 @@ int Frame_Clock::init(epdgui_args_vector_t &args) {
     _canvas_title->pushCanvas(0, 8, UPDATE_MODE_NONE);
     _canvas_base->pushCanvas(0, 100, UPDATE_MODE_NONE);
     drawItem(UPDATE_MODE_NONE);
-    // drawPassCount(UPDATE_MODE_NONE);
     EPDGUI_AddObject(_key_exit);
 
     _time          = 0;
     _btn           = 0;
-    _prev_sec      = 255;
-    _prev_temp     = 255;
-    _prev_hum      = 255;
 
     return 3;
 }
