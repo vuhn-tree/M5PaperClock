@@ -34,17 +34,30 @@ void setup()
     M5.EPD.SetRotation(180);
     M5.EPD.Clear(true); // Clear the screen.
     M5.RTC.begin();     // Init the RTC.
-    // canvas.createCanvas(540, 960);
 
     canvas.createCanvas(960, 540);
-    canvas.setTextSize(20;
+    canvas.setTextSize(20);
     canvas.fillCanvas(0);
-    // canvas.drawString("Hello World2", 45, 350);
     canvas.pushCanvas(0, 0, UPDATE_MODE_DU4); // Update the screen.
 }
 
 void loop()
 {
+    if (M5.BtnL.wasPressed()) {
+        M5.EPD.Active();
+    }
+    if (M5.BtnP.wasPressed()) {
+        delay(1000);
+        M5.EPD.StandBy();
+    }
+    if (M5.BtnR.wasPressed()) {
+        delay(1000);
+        M5.EPD.Sleep();
+    }
+    M5.BtnL.lastChange();
+    M5.update();
+    // delay(100);
+
     if (millis() - _time > 1000)
     {
         _time = millis();
@@ -54,10 +67,12 @@ void loop()
         M5.RTC.getTime(&time_struct);
         M5.RTC.getDate(&date_struct);
 
-        // RTC
+        // RTC Date
         sprintf(buf, "%04d - %02d - %02d", date_struct.year, date_struct.mon,
                 date_struct.day);
         canvas.drawString(buf, 30, 300);
+
+        // RTC Time
         sprintf(buf, "%02d : %02d : %02d", time_struct.hour, time_struct.min,
                 time_struct.sec);
         canvas.drawString(buf, 50, 400);
