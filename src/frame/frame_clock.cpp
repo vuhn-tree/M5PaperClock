@@ -16,23 +16,15 @@ Frame_Clock::Frame_Clock(void) {
 
     _canvas_base = new M5EPD_Canvas(&M5.EPD);
     _canvas_data = new M5EPD_Canvas(&M5.EPD);
-    _canvas_pos  = new M5EPD_Canvas(&M5.EPD);
-    _canvas_pass = new M5EPD_Canvas(&M5.EPD);
 
     _canvas_base->createCanvas(300, 600);
     _canvas_data->createCanvas(240, 480);
-    _canvas_pos->createCanvas(240, 60);
-    _canvas_pass->createCanvas(150, 32);
 
     _canvas_base->setTextSize(26);
     _canvas_data->setTextSize(26);
-    _canvas_pos->setTextSize(26);
-    _canvas_pass->setTextSize(26);
 
     _canvas_base->setTextDatum(CL_DATUM);
     _canvas_data->setTextDatum(CR_DATUM);
-    _canvas_pos->setTextDatum(CR_DATUM);
-    _canvas_pass->setTextDatum(CR_DATUM);
 
     exitbtn("Home");
     _canvas_title->drawString("Clock", 270, 34);
@@ -73,8 +65,6 @@ Frame_Clock::Frame_Clock(void) {
 Frame_Clock::~Frame_Clock(void) {
     delete _canvas_base;
     delete _canvas_data;
-    delete _canvas_pos;
-    delete _canvas_pass;
 }
 
 void Frame_Clock::drawItem(uint16_t flag, const char *str, int y) {
