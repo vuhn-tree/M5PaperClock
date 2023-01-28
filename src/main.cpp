@@ -24,6 +24,7 @@ void loop()
 #define POS_RX (240 - 15)
 
 #include <M5EPD.h>
+#include "resources/binaryttf.h"
 
 int _time = 0;
 M5EPD_Canvas canvas(&M5.EPD);
@@ -35,8 +36,11 @@ void setup()
     M5.EPD.Clear(true); // Clear the screen.
     M5.RTC.begin();     // Init the RTC.
 
+
     canvas.createCanvas(960, 540);
-    canvas.setTextSize(20);
+    // canvas.loadFont(binaryttf, sizeof(binaryttf));
+    // canvas.createRender(36, 14);
+    canvas.setTextSize(88);
     canvas.fillCanvas(0);
     canvas.pushCanvas(0, 0, UPDATE_MODE_DU4); // Update the screen.
 }
