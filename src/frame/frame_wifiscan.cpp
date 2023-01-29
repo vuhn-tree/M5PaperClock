@@ -263,7 +263,7 @@ void Frame_WifiScan::Connect() {
     _connected = 1;
 
     SetWifi(_connect_ssid, _connect_password);
-    // SyncNTPTime();
+    SyncNTPTime();
     scan();
 }
 
