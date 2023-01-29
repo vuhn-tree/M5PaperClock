@@ -25,6 +25,9 @@ void loop()
 
 #include <M5EPD.h>
 #include "resources/binaryttf.h"
+#include "WiFi.h"
+
+void scan(String *ssid, int32_t *rssi);
 
 int _time = 0;
 M5EPD_Canvas canvas(&M5.EPD);
@@ -36,6 +39,12 @@ void setup()
     M5.EPD.Clear(true); // Clear the screen.
     M5.RTC.begin();     // Init the RTC.
 
+    char buf[100];
+    String ssid;
+    int32_t rssi;
+    scan(&ssid, &rssi);
+    sprintf(buf, "%s (%d db)", ssid.c_str(), rssi);
+    // log_d("")
 
     canvas.createCanvas(960, 540);
     // canvas.loadFont(binaryttf, sizeof(binaryttf));
@@ -43,6 +52,8 @@ void setup()
     canvas.setTextSize(88);
     canvas.fillCanvas(0);
     canvas.pushCanvas(0, 0, UPDATE_MODE_DU4); // Update the screen.
+    
+    canvas.drawString(buf, 50, 50);
 }
 
 void loop()
@@ -86,6 +97,24 @@ void loop()
 
         canvas.pushCanvas(0, 0, UPDATE_MODE_A2);
     }
+}
+
+void scan(String *ssid, int32_t *rssi) {
+    WiFi.mode(WIFI_STA);
+    WiFi.disconnect();
+    WiFi.scanNetworks(true);
+
+    int wifi_num;
+    while (1) {
+        wifi_num = WiFi.scanComplete();
+        if (wifi_num >= 0) {
+            break;
+        }
+    }
+
+    *ssid = WiFi.SSID(0);
+    *rssi = WiFi.RSSI(0);
+    WiFi.scanDelete();
 }
 
 #endif
