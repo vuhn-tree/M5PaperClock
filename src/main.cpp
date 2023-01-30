@@ -1,4 +1,4 @@
-// #define test
+#define test
 
 #ifdef test
 #include <M5EPD.h>
@@ -25,7 +25,10 @@ void loop()
 
 #include <M5EPD.h>
 #include "resources/binaryttf.h"
+#include "frame/frame_wifipassword.h"
 #include "WiFi.h"
+#include "frame/frame_base.h"
+#include "epdgui/epdgui.h"
 
 void scan(String *ssid, int32_t *rssi);
 
@@ -115,6 +118,19 @@ void scan(String *ssid, int32_t *rssi) {
     *ssid = WiFi.SSID(0);
     *rssi = WiFi.RSSI(0);
     WiFi.scanDelete();
+}
+
+void wifiConnect(epdgui_args_vector_t &args) {
+    
+    EPDGUI_Button* _connect_key = (EPDGUI_Button *)(args[0]);
+    Frame_Base *frame = EPDGUI_GetFrame("Frame_WifiPassword");
+    if (frame == NULL) {
+        frame = new Frame_WifiPassword(false);
+        EPDGUI_AddFrame("Frame_WifiPassword", frame);
+    }
+    EPDGUI_PushFrame(frame);
+    *((int *)(args[1])) = 0;
+    
 }
 
 #endif
