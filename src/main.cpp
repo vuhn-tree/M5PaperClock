@@ -47,11 +47,8 @@ void setup()
     int32_t rssi;
     scan(&ssid, &rssi);
     sprintf(buf, "%s (%d db)", ssid.c_str(), rssi);
-    // log_d("")
 
     canvas.createCanvas(960, 540);
-    // canvas.loadFont(binaryttf, sizeof(binaryttf));
-    // canvas.createRender(36, 14);
     canvas.setTextSize(88);
     canvas.fillCanvas(0);
     canvas.pushCanvas(0, 0, UPDATE_MODE_DU4); // Update the screen.
