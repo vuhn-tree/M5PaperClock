@@ -91,11 +91,11 @@ int Frame_Clock::run() {
             float chumi = M5.SHT30.GetRelHumidity();
 
             // temperature
-            sprintf(buf, "%.2f F", ctemp);
+            sprintf(buf, "Temp: %.2f F", ctemp);
             _canvas_data->drawString(buf, POS_RX, 150);
 
             // humidity
-            sprintf(buf, "%d %%", (int)chumi);
+            sprintf(buf, "Humidity: %d %%", (int)chumi);
             _canvas_data->drawString(buf, POS_RX, 210);
         } else {
             _canvas_data->drawString("[FAILED]", POS_RX, 150);
