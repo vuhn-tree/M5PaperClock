@@ -261,20 +261,7 @@ void Shutdown() {
     M5.EPD.Clear();
     M5.EPD.WritePartGram4bpp(92, 182, 356, 300, ImageResource_logo_356x300);
     M5.EPD.UpdateFull(UPDATE_MODE_GC16);
-    M5.EPD.UpdateFull(UPDATE_MODE_GC16);
-
-
-    // int footer_height = 28;
-    // int margin_bottom = 10;
-    // M5EPD_Canvas* _canvas_footer = new M5EPD_Canvas(&M5.EPD);
-    // _canvas_footer->createCanvas(540, 28);
-    // char buf[128];
-    // sprintf(buf, "Shutdown to save power, touch to continue?");
-    // _canvas_footer->drawString(buf, 270, footer_height / 2);
-    // _canvas_footer->pushCanvas(0, 960 - footer_height - margin_bottom,
-    //                                    UPDATE_MODE_DU4);
-
-                                       
+    M5.EPD.UpdateFull(UPDATE_MODE_GC16);                                   
     SaveSetting();
     delay(600);
     M5.disableEPDPower();
