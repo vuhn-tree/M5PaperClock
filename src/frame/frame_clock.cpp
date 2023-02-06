@@ -102,7 +102,7 @@ int Frame_Clock::run() {
             _canvas_data->drawString("[FAILED]", POS_RX, 210);
         }
 
-        _canvas_data->pushCanvas(300, 100, UPDATE_MODE_A2);
+        _canvas_data->pushCanvas(400, 100, UPDATE_MODE_A2);
     }
     return 1;
 }
